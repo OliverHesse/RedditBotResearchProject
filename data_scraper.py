@@ -24,10 +24,10 @@ class User:
         except:
             self.comment_karma = 0
         try:
-            self.comment_data_list = self.process_comment_list(redditor.comments.hot(limit=4))  
+            self.comment_data_list = self.process_comment_list(redditor.comments.hot(limit=1000))  
         except:
             self.comment_data_list = []
-        pprint.pprint(vars(redditor))
+    
         
 
   
@@ -66,37 +66,44 @@ def process_comment_list(comment_list,unique_user_set,ignore_accounts):
         user_list.append(User(author))
         unique_user_set.add(author.name)
     return user_list
-def run(subreddit_list,reddit_client_data,ignore_accounts,MAX_POSTS):
+def scrape_data(subreddit_list,ignore_accounts,MAX_POSTS,bot_name,agent_name):
     start_time = datetime.now()
     unique_user_set = set()
     user_list = []
-    reddit = praw.Reddit("bot1",user_agent="BotResearchProjectBot (by /u/TiredAndExtraTired )")
+    
+    reddit = praw.Reddit(bot_name,user_agent=agent_name)
     file_json_data = []
     for subreddit_name in subreddit_list:
         sub = reddit.subreddit(subreddit_name)
         submissions = sub.hot(limit = MAX_POSTS)
         print("===== processing requests =====")
+        subreddit_unique_user_set = set()
         subreddit_user_list = []
         for post in submissions:
             
             print("===== "+ post.title +"=====")
             comments = post.comments.list()
           
-            post_user_list = process_comment_list(comments,unique_user_set,ignore_accounts)
+            post_user_list = process_comment_list(comments,subreddit_unique_user_set,ignore_accounts)
             
             print("post total users found: " +str(len(post_user_list)))
             subreddit_user_list += post_user_list
         data = []
         for user in subreddit_user_list:
             data.append(user.jsonify_user())
-        file_json_data.append([datetime.now().timestamp(),data])
+        
+        file_json_data.append([datetime.now().timestamp(),subreddit_name,data])
         user_list += subreddit_user_list
-    with open("data/user_data.json","w") as file:
-        json.dump(file_json_data, file, indent=4)   
+        unique_user_set.update(subreddit_unique_user_set)
+    
     print(f"program finished in: {datetime.now()-start_time}")
     print("unique accounts found: ")
     print(len(unique_user_set))
     print("User objects generated: ")
     print(len(user_list))
+    return file_json_data
+    with open("data/user_data.json","w") as file:
+        json.dump(file_json_data, file, indent=4)   
+
 
 

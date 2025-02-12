@@ -19,6 +19,21 @@ there are sadly some limits too how much data i can pull. i cannot specify a tim
 this limits me significantly especialy since there will be an overlap between top and new.
 to counteract this i will expand the number of subreddits i will research
 luckily even with this limit i can still get a lot of users
+the way the user_data file is formated is like such
+{
+    {
+        crawled_time_stamp
+        subreddit_name
+        user_data{
+            non unique list of users that commented in this subreddit
+        }
+    }
+}
+
+this will generate duplicate data e.g 1 user might have commented in both europe and uknews. so their user data is in both.
+when however i do multi subreddit data analysis these users are not treated as 2 but one
+
+
 here is an example:
 total unique users from 5 posts: 269
 that is from the top 5 posts on r/uknews and included We’re looking for mods… and Positive news weekend mega thread! which have few comments
@@ -26,3 +41,6 @@ that is from the top 5 posts on r/uknews and included We’re looking for mods�
 graphs:
 pie chart for age ranges and what subreddits they posted in
 box plot for stuff like post frequency of accounts in an age range
+
+python main.py uknews bot1 BotResearchProjectBot(by-/u/TiredAndExtraTired)
+python main.py uknews bot2 CommentBehavior(by-/u/noWinner)

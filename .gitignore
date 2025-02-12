@@ -176,6 +176,6 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # praw stuff
-praw.init
+praw.ini
 #data dir
 data/
