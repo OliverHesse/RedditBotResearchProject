@@ -6,7 +6,6 @@ import json
 from datetime import datetime
 import os
 import numpy
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 fig = px.scatter(x=range(10), y=range(10))
 fig.write_html("data/graph_display.html")
@@ -26,22 +25,6 @@ def calculate_comment_frequency(end_date,comment_list):
     return len(comment_list)/(oldest_comment-youngest_comment)
 
 
-def sentiment_analysis_inital(data):
-
-    #each data_instance has a different timestamp
-    for data_instance_i,data_instance in enumerate(data):
-        end_time = datetime.fromtimestamp(data_instance[0])
-        for user_i,user in enumerate(data_instance[2]):
-            #avoid duplicate data points
-            print(f"analysing: {user["username"]}")
-            account_comment_list = user["comment-data-list"]
-            comment_sentiment_list = []
-            for comment_i,comment in enumerate(account_comment_list):
-                comment_sentiment = analyse_comments_sentiment(comment)
-                data[data_instance_i][2][user_i]["comment-data-list"][comment_i].append(comment_sentiment)
-            print(f"finished analysing user {user["username"]}")
-    return data
-  
 
 
 def generate_account_age_related_plots(data):
@@ -150,18 +133,7 @@ def generate_account_age_related_plots(data):
 
 
 
-def analyse_comments_sentiment(comment):
-    sid_obj = SentimentIntensityAnalyzer()
 
-    # polarity_scores method of SentimentIntensityAnalyzer object gives a sentiment dictionary.
-    # which contains pos, neg, neu, and compound scores.
-    sentiment_dict = sid_obj.polarity_scores(comment[2])['compound']
-    if sentiment_dict >= 0.05 :
-        return "Positive"
-    elif sentiment_dict <= -0.05 :
-        return "Negative"
-    else :
-        return "Neutral"
 
 def merge_dic(dic1,dic2):
     keys = {"Positive","Negative","Neutral"}
@@ -177,18 +149,13 @@ def merge_dic(dic1,dic2):
 def generate_graphs(data_directory,generate_sentiment = False):
     data = []
     arr = os.listdir(data_directory)
-    print("processing files")
+    
     for file_path in arr:
-        
-        if generate_sentiment:
-            file_data = None
-            with open(data_directory+"/"+file_path,"r") as file:
-                file_data = json.load(file)
-            new_data = sentiment_analysis_inital(file_data)
-            with open(data_directory+"/"+file_path,'w') as file:
-                json.dump(new_data, file, indent=4)  
         with open(data_directory+"/"+file_path,"r") as file:
             data += json.load(file)  
-        print("file finished processing")
+        
     print("generating graphs")
     generate_account_age_related_plots(data) 
+
+if __name__ == "__main__":
+    generate_graphs("data/user_data",True)

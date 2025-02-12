@@ -2,7 +2,7 @@ import praw
 from praw.models import MoreComments,Comment
 from datetime import datetime
 import json
-import pprint
+import sys
 class User:
 
     def __init__(self,redditor):
@@ -70,7 +70,7 @@ def scrape_data(subreddit_list,ignore_accounts,MAX_POSTS,bot_name,agent_name):
     start_time = datetime.now()
     unique_user_set = set()
     user_list = []
-    
+
     reddit = praw.Reddit(bot_name,user_agent=agent_name)
     file_json_data = []
     for subreddit_name in subreddit_list:
@@ -105,5 +105,22 @@ def scrape_data(subreddit_list,ignore_accounts,MAX_POSTS,bot_name,agent_name):
     with open("data/user_data.json","w") as file:
         json.dump(file_json_data, file, indent=4)   
 
+
+
+if __name__ == "__main__":
+    ignore_accounts = {"AutoModerator"}
+    MAX_POSTS = 4
+
+    if len(sys.argv) == 4:
+        print(f"sub: {sys.argv[1]}")
+        print(f"bot: {sys.argv[2]}")
+        print(f"agent: {sys.argv[3]}")
+        subreddit = sys.argv[1]
+        bot = sys.argv[2]
+        agent = sys.argv[3]
+        data = scrape_data([subreddit],ignore_accounts,MAX_POSTS,bot,agent)
+        print(data[0][1])
+        with open(f"data/user_data/{subreddit}.json","w") as file:
+            json.dump(data, file, indent=4)        
 
 
