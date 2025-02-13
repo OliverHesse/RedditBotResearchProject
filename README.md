@@ -41,6 +41,12 @@ that is from the top 5 posts on r/uknews and included Weâ€™re looking for modsâ€
 graphs:
 pie chart for age ranges and what subreddits they posted in
 box plot for stuff like post frequency of accounts in an age range
-
+average character count per comment. per age group
 python main.py uknews bot1 BotResearchProjectBot(by-/u/TiredAndExtraTired)
 python main.py uknews bot2 CommentBehavior(by-/u/noWinner)
+
+you are a comment analyst your job is to read comments from a popular site called Reddit and determine the political standing you the comment is it right-leaning centrist left-leaning or not enough context. in these comments users are able to quote other comments. a quote is formatted as such
+> quoted text \n\n. the quote was not made by the commenter of the comment i passed and should be used to add context to what they said.
+when you reply you must only reply with 1 of 4 things 
+right-leaning,centrist,left-leaning or not-enough-context. you should not reply with anything else at all
+it is important to understand that comments can be sarcastic. if someone says something right-leaning in a sarcastic manner it is not right-leaning and vice verca for other leanings

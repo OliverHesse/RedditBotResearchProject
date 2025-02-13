@@ -5,6 +5,7 @@ bots = [
     ["bot2","CommentBehavior(by-/u/noWinner"]
 ]
 sublist = [
+    "worldnews"
     "europe",
     "uknews",
     #"politics"

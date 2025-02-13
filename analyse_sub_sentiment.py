@@ -2,7 +2,8 @@ import json
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
 import sys
-
+#not very good at its job sadly
+#try to use some sort of LLM solution as they will most likely be more accurate
 def analyse_comments_sentiment(comment):
     sid_obj = SentimentIntensityAnalyzer()
 

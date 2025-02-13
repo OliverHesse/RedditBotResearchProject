@@ -24,7 +24,7 @@ class User:
         except:
             self.comment_karma = 0
         try:
-            self.comment_data_list = self.process_comment_list(redditor.comments.hot(limit=1000))  
+            self.comment_data_list = self.process_comment_list(redditor.comments.new(limit=1000))  
         except:
             self.comment_data_list = []
     
@@ -32,13 +32,21 @@ class User:
 
   
     def process_comment_list(self,comment_list):
+        print("getting comments for user")
         comment_data_list = []
         for comment in comment_list:
+            
             if isinstance(comment,MoreComments):
+                print("found instance of MoreComment:")
+                
+                continue
                 nested_comment_data_list = self.process_comment_list(comment.comments())
                 comment_data_list += nested_comment_data_list
                 continue   
-            comment_data_list.append([comment.created_utc,comment.subreddit.display_name,comment.body])
+            # in comments > text \n\n means the text is from another comment
+            
+           
+            comment_data_list.append([comment.created_utc,comment.subreddit.display_name,comment.body,0])
         return comment_data_list
     def jsonify_user(self):
         return {"username":self.username,
@@ -109,7 +117,7 @@ def scrape_data(subreddit_list,ignore_accounts,MAX_POSTS,bot_name,agent_name):
 
 if __name__ == "__main__":
     ignore_accounts = {"AutoModerator"}
-    MAX_POSTS = 4
+    MAX_POSTS = 10
 
     if len(sys.argv) == 4:
         print(f"sub: {sys.argv[1]}")
