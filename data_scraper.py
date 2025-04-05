@@ -3,9 +3,11 @@ from praw.models import MoreComments,Comment
 from datetime import datetime
 import json
 import sys
+
 class User:
 
     def __init__(self,redditor):
+       
         print(vars(redditor))
         try:
             self.username = getattr(redditor,"name","(NA)")
@@ -18,15 +20,20 @@ class User:
         try:
             self.creation_date = getattr(redditor,"created_utc", getattr(redditor,"created",0))
         except:
+            print("error trying to get user creation date")
             self.creation_date = 0
         try:
             self.comment_karma = getattr(redditor,"comment_karma",0)
         except:
+            print("error trying to get user karma")
             self.comment_karma = 0
+
         try:
+            pass
             self.comment_data_list = self.process_comment_list(redditor.comments.new(limit=1000))  
         except:
-            self.comment_data_list = []
+            print("error trying to parse user comments")
+            self.comment_data_list = [] #TODO replace with NA
     
         
 
@@ -35,18 +42,31 @@ class User:
         print("getting comments for user")
         comment_data_list = []
         for comment in comment_list:
-            
+       
             if isinstance(comment,MoreComments):
                 print("found instance of MoreComment:")
                 
                 continue
-                nested_comment_data_list = self.process_comment_list(comment.comments())
-                comment_data_list += nested_comment_data_list
-                continue   
+                  
             # in comments > text \n\n means the text is from another comment
             
-           
-            comment_data_list.append([comment.created_utc,comment.subreddit.display_name,comment.body,0])
+            parent_id = comment.parent_id
+            parent_creation_unix = 0
+            top_level_comment = False
+
+            if parent_id.find("t1") != -1:
+                try:
+                    parent_creation_unix = reddit.comment(id=parent_id).created_utc
+                except:
+                    
+                    print("error trying to get comment parent_date")
+            else:
+                top_level_comment = True
+                parent_creation_unix = comment.submission.created_utc
+
+            comment_data_list.append({"subreddit":comment.subreddit.display_name,"top-level-comment":top_level_comment,"parent-creation-unix":parent_creation_unix,"creation-unix":comment.created_utc,"body":comment.body,"sentiment":0})
+    
+        print(f"comment list len {len(comment_data_list)}")
         return comment_data_list
     def jsonify_user(self):
         return {"username":self.username,
@@ -71,6 +91,7 @@ def process_comment_list(comment_list,unique_user_set,ignore_accounts):
             continue
         if author.name in unique_user_set or author.name in ignore_accounts:
             continue
+        
         user_list.append(User(author))
         unique_user_set.add(author.name)
     return user_list
@@ -78,7 +99,7 @@ def scrape_data(subreddit_list,ignore_accounts,MAX_POSTS,bot_name,agent_name):
     start_time = datetime.now()
     unique_user_set = set()
     user_list = []
-
+    global reddit
     reddit = praw.Reddit(bot_name,user_agent=agent_name)
     file_json_data = []
     for subreddit_name in subreddit_list:
@@ -117,7 +138,7 @@ def scrape_data(subreddit_list,ignore_accounts,MAX_POSTS,bot_name,agent_name):
 
 if __name__ == "__main__":
     ignore_accounts = {"AutoModerator"}
-    MAX_POSTS = 10
+    MAX_POSTS = 1
 
     if len(sys.argv) == 4:
         print(f"sub: {sys.argv[1]}")
@@ -127,7 +148,7 @@ if __name__ == "__main__":
         bot = sys.argv[2]
         agent = sys.argv[3]
         data = scrape_data([subreddit],ignore_accounts,MAX_POSTS,bot,agent)
-        print(data[0][1])
+       
         with open(f"data/user_data/{subreddit}.json","w") as file:
             json.dump(data, file, indent=4)        
 

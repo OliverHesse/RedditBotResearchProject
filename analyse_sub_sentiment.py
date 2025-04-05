@@ -9,7 +9,7 @@ def analyse_comments_sentiment(comment):
 
     # polarity_scores method of SentimentIntensityAnalyzer object gives a sentiment dictionary.
     # which contains pos, neg, neu, and compound scores.
-    sentiment_dict = sid_obj.polarity_scores(comment[2])['compound']
+    sentiment_dict = sid_obj.polarity_scores(comment["body"])['compound']
     if sentiment_dict >= 0.05 :
         return "Positive"
     elif sentiment_dict <= -0.05 :
@@ -29,7 +29,7 @@ def sentiment_analysis_inital(data):
             
             for comment_i,comment in enumerate(account_comment_list):
                 comment_sentiment = analyse_comments_sentiment(comment)
-                data[data_instance_i][2][user_i]["comment-data-list"][comment_i].append(comment_sentiment)
+                data[data_instance_i][2][user_i]["comment-data-list"][comment_i]["sentiment"] = comment_sentiment
             print(f"finished analysing user {user["username"]}")
     return data
 

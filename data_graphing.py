@@ -15,7 +15,7 @@ def calculate_comment_frequency(end_date,comment_list):
         return 0
     youngest_comment,oldest_comment = float('inf'),0
     for comment in comment_list:
-        comment_age = (end_date - datetime.fromtimestamp(comment[0])).days
+        comment_age = (end_date - datetime.fromtimestamp(comment['creation-unix'])).days
         if comment_age > oldest_comment:
             oldest_comment = comment_age
         if comment_age < youngest_comment:
@@ -91,8 +91,8 @@ def generate_account_age_related_plots(data):
             
             comment_sentiment_list = []
             for comment in account_comment_list:
-                comment_sentiment_list.append(comment[3])
-                comment_sub_set.add(comment[1])
+                comment_sentiment_list.append(comment['sentiment'])
+                comment_sub_set.add(comment["subreddit"])
             comment_dic = {p: comment_sentiment_list.count(p) for p in comment_sentiment_list}
 
             if account_age.days < 364:
@@ -286,6 +286,7 @@ def generate_graphs(data_directory,generate_sentiment = False):
     arr = os.listdir(data_directory)
     
     for file_path in arr:
+        print(f"opening {file_path}")
         with open(data_directory+"/"+file_path,"r") as file:
             data += json.load(file)  
         

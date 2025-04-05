@@ -34,6 +34,9 @@ this will generate duplicate data e.g 1 user might have commented in both europe
 when however i do multi subreddit data analysis these users are not treated as 2 but one
 
 
+something else to look into is average time to comment/reply. aka how long since the parent post or comment was made how long did it take them to respond
+need to grab data of parent creation time_stamp
+
 here is an example:
 total unique users from 5 posts: 269
 that is from the top 5 posts on r/uknews and included We’re looking for mods… and Positive news weekend mega thread! which have few comments
@@ -42,6 +45,10 @@ graphs:
 pie chart for age ranges and what subreddits they posted in
 box plot for stuff like post frequency of accounts in an age range
 average character count per comment. per age group
+average time to comment-replies and top level
+average time to reply-only replies
+distribution of top level comments vs replies
+
 python main.py uknews bot1 BotResearchProjectBot(by-/u/TiredAndExtraTired)
 python main.py uknews bot2 CommentBehavior(by-/u/noWinner)
 

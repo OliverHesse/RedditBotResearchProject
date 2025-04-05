@@ -2,13 +2,15 @@ import os
 import subprocess
 bots = [
     ["bot1","BotResearchProjectBot(by-/u/TiredAndExtraTired)"],
-    ["bot2","CommentBehavior(by-/u/noWinner"]
+    ["bot2","CommentBehaviorAnalysis"],
+    ["bot3","SubdistributionAnalysis"],
+    ["bot4","commentDistributionAnalysis"],
 ]
 sublist = [
-    "worldnews"
+    "worldnews",
     "europe",
     "uknews",
-    #"politics"
+    "politics"
 ]
 if __name__ == "__main__":
 
